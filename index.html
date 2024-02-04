@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess That Color</title>
+    <script type="module" src="https://unpkg.com/vanilla-colorful?module"></script>
+    <style>
+        #picker {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: max-content;
+            flex-direction: column;
+        }
+
+        #result {
+            display: none;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        * {
+            border: none;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 1.5rem;
+            border-radius: 5px;
+            border: 2px solid black;
+            margin: 10px;
+        }
+    </style>
+    <style>
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Bold-Italic.woff2') format('woff2'),
+                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Bold-Italic.woff') format('woff');
+            font-weight: 700;
+            font-style: italic;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Bold.woff2') format('woff2'),
+                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Bold.woff') format('woff');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-ExtraBold-Italic.woff2') format('woff2'),
+                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-ExtraBold-Italic.woff') format('woff');
+            font-weight: 800;
+            font-style: italic;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-ExtraBold.woff2') format('woff2'),
+                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-ExtraBold.woff') format('woff');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Italic.woff2') format('woff2'),
+                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Italic.woff') format('woff');
+            font-weight: 400;
+            font-style: italic;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Medium-Italic.woff2') format('woff2'),
+                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Medium-Italic.woff') format('woff');
+            font-weight: 500;
+            font-style: italic;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Medium.woff2') format('woff2'),
+                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Medium.woff') format('woff');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2') format('woff2'),
+                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Regular.woff') format('woff');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Guess the color!</h1>
+
+    <div id="picker">
+        <input type="text" id="inp-el">
+        <button onclick="check();" id="mark">Mark</button>
+
+        <div id="result">
+            <br>
+        </div>
+    </div>
+
+
+
+    <script>
+        let cur_color = generateRandomRgbColor();
+        function generateRandomRgbColor() {
+            let r = Math.floor(Math.random() * 255);
+            let g = Math.floor(Math.random() * 255);
+            let b = Math.floor(Math.random() * 255);
+
+            document.body.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
+            document.body.style.color = getContrastColor([r, g, b]);
+
+            document.getElementById('inp-el').style.backgroundColor = `rgb(${r / 2}, ${g / 2}, ${b / 2})`;
+            document.getElementById('inp-el').style.color = getContrastColor([r / 2, g / 2, b / 2]);
+            document.getElementById('mark').style.backgroundColor = `rgb(${r / 4}, ${g / 4}, ${b / 4})`;
+            document.getElementById('mark').style.color = getContrastColor([r / 4, g / 4, b / 4]);
+            return [r, g, b];
+        }
+
+        function getContrastColor(rgb) {
+            let yiq = ((rgb[0] * 299) + (rgb[1] * 587) + (rgb[2] * 114)) / 1000;
+            return (yiq >= 128) ? 'black' : 'white';
+        }
+
+        function check() {
+            let inp = document.getElementById('inp-el').value;
+
+            let clr = [0, 0, 0];
+
+            if (inp.length == 6 || inp.length == 7) {
+                clr[0] = parseInt(inp.substring(0, 2), 16);
+                clr[1] = parseInt(inp.substring(2, 4), 16);
+                clr[2] = parseInt(inp.substring(4, 6), 16);
+            } else if (inp.length == 3 || inp.length == 4) {
+                clr[0] = parseInt(inp.substring(0, 1), 16);
+                clr[1] = parseInt(inp.substring(1, 2), 16);
+                clr[2] = parseInt(inp.substring(2, 3), 16);
+            } else { // attempt rgb
+                let parts = inp.split(',');
+                if (parts.length == 3) {
+                    clr[0] = parseInt(parts[0]);
+                    clr[1] = parseInt(parts[1]);
+                    clr[2] = parseInt(parts[2]);
+                } else {
+                    let parts = inp.split(' ');
+                    clr[0] = parseInt(parts[0]);
+                    clr[1] = parseInt(parts[1]);
+                    clr[2] = parseInt(parts[2]);
+                }
+            }
+
+            let diff = Math.abs(clr[0] - cur_color[0]) + Math.abs(clr[1] - cur_color[1]) + Math.abs(clr[2] - cur_color[2]);
+
+            if (diff < 200) {
+                document.body.style.backgroundColor = 'green';
+            } else {
+                document.body.style.backgroundColor = 'red';
+                document.getElementById('result').innerText = `Answer was #${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')}`;
+            }
+
+            document.body.style.color = 'white';
+            document.getElementById('inp-el').style.backgroundColor = `${document.body.style.backgroundColor}`;
+            document.getElementById('mark').style.backgroundColor = `${document.body.style.backgroundColor}`;
+            document.getElementById('mark').style.color = 'white';
+
+            document.getElementById('result').style.display = 'flex';
+
+
+
+            setTimeout(() => {
+                document.getElementById('result').style.display = 'none';
+                cur_color = generateRandomRgbColor();
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>
