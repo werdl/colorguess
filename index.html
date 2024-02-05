@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guess That Color</title>
     <script type="module" src="https://unpkg.com/vanilla-colorful?module"></script>
+    <script src="https://chir.ag/projects/ntc/ntc.js"></script>
     <style>
         #picker {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: max-content;
             flex-direction: column;
         }
 
@@ -24,13 +24,19 @@
             font-size: 1.5rem;
             text-align: center;
             font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: calc(100vh - 2.125rem + 0.625rem);
         }
 
         * {
             border: none;
         }
 
-        input, button {
+        input,
+        button {
             padding: 10px;
             font-size: 1.5rem;
             border-radius: 5px;
@@ -110,11 +116,93 @@
             font-style: normal;
             font-display: swap;
         }
+
+        .top-right {
+            position: absolute;
+            top: 1vh;
+            right: 1vw;
+        }
+
+
+
+        /* The switch - the box around the slider */
+        .switch {
+            position: absolute;
+            width: 4rem;
+            height: 2.125rem;
+        }
+
+        /* Hide default HTML checkbox */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* The slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            -webkit-transition: 0.4s;
+            transition: 0.4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.625rem;
+            width: 1.625rem;
+            left: 0.25rem;
+            bottom: 0.25rem;
+            background-color: white;
+            -webkit-transition: 0.4s;
+            transition: 0.4s;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(1.625rem);
+            -ms-transform: translateX(1.625rem);
+            transform: translateX(1.625rem);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 2.125rem;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        #easy {
+            border-radius: 2.125rem;
+        }
+
+        #easy-text {
+            position: relative;
+            top: calc(2.125rem + 0.625rem);
+        }
     </style>
 </head>
 
 <body>
     <h1>Guess the color!</h1>
+
+    <div class="top-right" id="toggle">
+        <!-- toggles easy mode with a nice mini slider -->
+        <label class="switch" id="easy">
+            <input type="checkbox" onclick="switcheasy();">
+            <span class="slider round"></span>
+        </label>
+
+        <div id="easy-text">
+            Easy Mode
+        </div>
+    </div>
 
     <div id="picker">
         <input type="text" id="inp-el">
@@ -129,6 +217,73 @@
 
     <script>
         let cur_color = generateRandomRgbColor();
+        let easy = false;
+
+        function matchToListOfPresets(r, g, b) {
+            let presets = {
+                "green": [0, 255, 0],
+                "red": [255, 0, 0],
+                "blue": [0, 0, 255],
+                "yellow": [255, 255, 0],
+                "purple": [128, 0, 128],
+                "orange": [255, 165, 0],
+                "pink": [255, 192, 203],
+                "brown": [165, 42, 42],
+                "black": [0, 0, 0],
+                "white": [255, 255, 255],
+                "grey": [128, 128, 128],
+                "cyan": [0, 255, 255],
+                "magenta": [255, 0, 255],
+                "lime": [0, 255, 0],
+                "maroon": [128, 0, 0],
+            };
+
+            function findClosestColor(r, g, b) {
+                let presets = {
+                    "green": [0, 255, 0],
+                    "red": [255, 0, 0],
+                    "blue": [0, 0, 255],
+                    "yellow": [255, 255, 0],
+                    "purple": [128, 0, 128],
+                    "orange": [255, 165, 0],
+                    "pink": [255, 192, 203],
+                    "brown": [165, 42, 42],
+                    "black": [0, 0, 0],
+                    "white": [255, 255, 255],
+                    "grey": [128, 128, 128],
+                    "cyan": [0, 255, 255],
+                    "magenta": [255, 0, 255],
+                    "lime": [0, 255, 0],
+                    "maroon": [128, 0, 0],
+                };
+
+                let closestColor = "";
+                let minDistance = Number.MAX_VALUE;
+
+                for (let color in presets) {
+                    let preset = presets[color];
+                    let distance = Math.sqrt(Math.pow(r - preset[0], 2) + Math.pow(g - preset[1], 2) + Math.pow(b - preset[2], 2));
+
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestColor = color;
+                    }
+                }
+
+                return closestColor;
+            }
+        }
+
+        function switcheasy() {
+            easy = !easy;
+
+            if (easy) {
+                document.querySelector('input:focus+.slider').style.backgroundColor = `rgb(${255 - cur_color[0]}, ${255 - cur_color[1]}, ${255 - cur_color[2]})`;
+            } else {
+                document.querySelector('input:focus+.slider').style.backgroundColor = `rgb(${cur_color[0] / 2}, ${cur_color[1] / 2}, ${cur_color[2] / 2})`;
+            }
+        }
+
         function generateRandomRgbColor() {
             let r = Math.floor(Math.random() * 255);
             let g = Math.floor(Math.random() * 255);
@@ -142,6 +297,8 @@
             document.getElementById('inp-el').style.color = getContrastColor([r / 2, g / 2, b / 2]);
             document.getElementById('mark').style.backgroundColor = `rgb(${r / 4}, ${g / 4}, ${b / 4})`;
             document.getElementById('mark').style.color = getContrastColor([r / 4, g / 4, b / 4]);
+
+            document.getElementById('easy').style.backgroundColor = `rgb(${r / 2}, ${g / 2}, ${b / 2})`;
             return [r, g, b];
         }
 
@@ -154,12 +311,13 @@
             let inp = document.getElementById('inp-el').value;
 
             let clr = [0, 0, 0];
+            let success = false;
 
-            if (inp.length == 6 || inp.length == 7) {
+            if (inp.length == 7 && inp[0] == '#') {
                 clr[0] = parseInt(inp.substring(0, 2), 16);
                 clr[1] = parseInt(inp.substring(2, 4), 16);
                 clr[2] = parseInt(inp.substring(4, 6), 16);
-            } else if (inp.length == 3 || inp.length == 4) {
+            } else if (inp.length == 4 && inp[0] == '#') {
                 clr[0] = parseInt(inp.substring(0, 1), 16);
                 clr[1] = parseInt(inp.substring(1, 2), 16);
                 clr[2] = parseInt(inp.substring(2, 3), 16);
@@ -171,19 +329,36 @@
                     clr[2] = parseInt(parts[2]);
                 } else {
                     let parts = inp.split(' ');
-                    clr[0] = parseInt(parts[0]);
-                    clr[1] = parseInt(parts[1]);
-                    clr[2] = parseInt(parts[2]);
+                    if (parts.length == 3) {
+                        clr[0] = parseInt(parts[0]);
+                        clr[1] = parseInt(parts[1]);
+                        clr[2] = parseInt(parts[2]);
+                    } else {
+                        let cur_hex = `#${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')}`;
+
+                        let closest_match = ntc.name(cur_hex)[1].replace(' ', '');
+
+                        console.log(cur_hex.replace(' ', ''));
+                        console.log(closest_match);
+
+                        if (inp == closest_match) {
+                            clr = ntc.name(inp)[0];
+
+                            success = true;
+                        }
+
+                    }
                 }
             }
 
             let diff = Math.abs(clr[0] - cur_color[0]) + Math.abs(clr[1] - cur_color[1]) + Math.abs(clr[2] - cur_color[2]);
 
-            if (diff < 200) {
-                document.body.style.backgroundColor = 'green';
+            if (diff < 200 || success) {
+                document.body.style.color = 'green';
+                document.getElementById('result').innerText = 'Correct!';
             } else {
-                document.body.style.backgroundColor = 'red';
-                document.getElementById('result').innerText = `Answer was #${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')}`;
+                document.body.style.color = 'red';
+                document.getElementById('result').innerText = `Wrong! Answer was #${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')} (${ntc.name(`#${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')}`)[1]})`;
             }
 
             document.body.style.color = 'white';
@@ -192,8 +367,6 @@
             document.getElementById('mark').style.color = 'white';
 
             document.getElementById('result').style.display = 'flex';
-
-
 
             setTimeout(() => {
                 document.getElementById('result').style.display = 'none';
