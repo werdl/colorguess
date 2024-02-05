@@ -142,13 +142,16 @@
         /* The slider */
         .slider {
             position: absolute;
-            cursor: pointer;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
             -webkit-transition: 0.4s;
             transition: 0.4s;
+        }
+
+        .slider:hover {
+            cursor: pointer;
         }
 
         .slider:before {
@@ -185,6 +188,10 @@
         #easy-text {
             position: relative;
             top: calc(2.125rem + 0.625rem);
+        }
+
+        button:hover {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -282,6 +289,8 @@
             } else {
                 document.querySelector('input:focus+.slider').style.backgroundColor = `rgb(${cur_color[0] / 2}, ${cur_color[1] / 2}, ${cur_color[2] / 2})`;
             }
+
+            // actually does nothing, the difficulty is just a placebo
         }
 
         function generateRandomRgbColor() {
