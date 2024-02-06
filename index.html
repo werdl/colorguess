@@ -7,193 +7,7 @@
     <title>Guess That Color</title>
     <script type="module" src="https://unpkg.com/vanilla-colorful?module"></script>
     <script src="https://chir.ag/projects/ntc/ntc.js"></script>
-    <style>
-        #picker {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        #result {
-            display: none;
-        }
-
-        body {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.5rem;
-            text-align: center;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: calc(100vh - 2.125rem + 0.625rem);
-        }
-
-        * {
-            border: none;
-        }
-
-        input,
-        button {
-            padding: 10px;
-            font-size: 1.5rem;
-            border-radius: 5px;
-            border: 2px solid black;
-            margin: 10px;
-        }
-    </style>
-    <style>
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Bold-Italic.woff2') format('woff2'),
-                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Bold-Italic.woff') format('woff');
-            font-weight: 700;
-            font-style: italic;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Bold.woff2') format('woff2'),
-                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Bold.woff') format('woff');
-            font-weight: 700;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-ExtraBold-Italic.woff2') format('woff2'),
-                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-ExtraBold-Italic.woff') format('woff');
-            font-weight: 800;
-            font-style: italic;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-ExtraBold.woff2') format('woff2'),
-                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-ExtraBold.woff') format('woff');
-            font-weight: 800;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Italic.woff2') format('woff2'),
-                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Italic.woff') format('woff');
-            font-weight: 400;
-            font-style: italic;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Medium-Italic.woff2') format('woff2'),
-                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Medium-Italic.woff') format('woff');
-            font-weight: 500;
-            font-style: italic;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Medium.woff2') format('woff2'),
-                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Medium.woff') format('woff');
-            font-weight: 500;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'JetBrains Mono';
-            src: url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff2/JetBrainsMono-Regular.woff2') format('woff2'),
-                url('https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono/web/woff/JetBrainsMono-Regular.woff') format('woff');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        .top-right {
-            position: absolute;
-            top: 1vh;
-            right: 1vw;
-        }
-
-
-
-        /* The switch - the box around the slider */
-        .switch {
-            position: absolute;
-            width: 4rem;
-            height: 2.125rem;
-        }
-
-        /* Hide default HTML checkbox */
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        /* The slider */
-        .slider {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            -webkit-transition: 0.4s;
-            transition: 0.4s;
-        }
-
-        .slider:hover {
-            cursor: pointer;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 1.625rem;
-            width: 1.625rem;
-            left: 0.25rem;
-            bottom: 0.25rem;
-            background-color: white;
-            -webkit-transition: 0.4s;
-            transition: 0.4s;
-        }
-
-        input:checked+.slider:before {
-            -webkit-transform: translateX(1.625rem);
-            -ms-transform: translateX(1.625rem);
-            transform: translateX(1.625rem);
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 2.125rem;
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-
-        #easy {
-            border-radius: 2.125rem;
-        }
-
-        #easy-text {
-            position: relative;
-            top: calc(2.125rem + 0.625rem);
-        }
-
-        button:hover {
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -220,77 +34,57 @@
         </div>
     </div>
 
-
-
     <script>
-        let cur_color = generateRandomRgbColor();
         let easy = false;
 
-        function matchToListOfPresets(r, g, b) {
+        let cur_color = generateRandomRgbColor();
+
+
+        function findClosestColor(r, g, b) {
             let presets = {
                 "green": [0, 255, 0],
                 "red": [255, 0, 0],
                 "blue": [0, 0, 255],
                 "yellow": [255, 255, 0],
                 "purple": [128, 0, 128],
-                "orange": [255, 165, 0],
-                "pink": [255, 192, 203],
-                "brown": [165, 42, 42],
+                "orange": [255, 128, 0],
+                "pink": [255, 128, 255],
+                "brown": [128, 64, 64],
                 "black": [0, 0, 0],
                 "white": [255, 255, 255],
-                "grey": [128, 128, 128],
                 "cyan": [0, 255, 255],
                 "magenta": [255, 0, 255],
                 "lime": [0, 255, 0],
                 "maroon": [128, 0, 0],
             };
 
-            function findClosestColor(r, g, b) {
-                let presets = {
-                    "green": [0, 255, 0],
-                    "red": [255, 0, 0],
-                    "blue": [0, 0, 255],
-                    "yellow": [255, 255, 0],
-                    "purple": [128, 0, 128],
-                    "orange": [255, 165, 0],
-                    "pink": [255, 192, 203],
-                    "brown": [165, 42, 42],
-                    "black": [0, 0, 0],
-                    "white": [255, 255, 255],
-                    "grey": [128, 128, 128],
-                    "cyan": [0, 255, 255],
-                    "magenta": [255, 0, 255],
-                    "lime": [0, 255, 0],
-                    "maroon": [128, 0, 0],
-                };
 
-                let closestColor = "";
-                let minDistance = Number.MAX_VALUE;
+            let rounded_name = ntc.name(`#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`)[1].replace(' ', '');
 
-                for (let color in presets) {
-                    let preset = presets[color];
-                    let distance = Math.sqrt(Math.pow(r - preset[0], 2) + Math.pow(g - preset[1], 2) + Math.pow(b - preset[2], 2));
+            console.log(rounded_name);
 
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        closestColor = color;
-                    }
+
+            // if any of the presets are close enough, return that
+            for (let key in presets) {
+                let diff = Math.abs(presets[key][0] - r) + Math.abs(presets[key][1] - g) + Math.abs(presets[key][2] - b);
+
+                if (diff < 200) {
+                    return key;
                 }
-
-                return closestColor;
             }
+
+            return rounded_name;
         }
+
 
         function switcheasy() {
             easy = !easy;
 
             if (easy) {
-                document.querySelector('input:focus+.slider').style.backgroundColor = `rgb(${255 - cur_color[0]}, ${255 - cur_color[1]}, ${255 - cur_color[2]})`;
+                document.querySelector('#easy').style.backgroundColor = `rgb(${255 - cur_color[0]}, ${255 - cur_color[1]}, ${255 - cur_color[2]})`;
             } else {
-                document.querySelector('input:focus+.slider').style.backgroundColor = `rgb(${cur_color[0] / 2}, ${cur_color[1] / 2}, ${cur_color[2] / 2})`;
+                document.querySelector('#easy').style.backgroundColor = `rgb(${cur_color[0] / 2}, ${cur_color[1] / 2}, ${cur_color[2] / 2})`;
             }
-
-            // actually does nothing, the difficulty is just a placebo
         }
 
         function generateRandomRgbColor() {
@@ -307,7 +101,11 @@
             document.getElementById('mark').style.backgroundColor = `rgb(${r / 4}, ${g / 4}, ${b / 4})`;
             document.getElementById('mark').style.color = getContrastColor([r / 4, g / 4, b / 4]);
 
-            document.getElementById('easy').style.backgroundColor = `rgb(${r / 2}, ${g / 2}, ${b / 2})`;
+            if (easy) {
+                document.querySelector('#easy').style.backgroundColor = `rgb(${255 - r}, ${255 - g}, ${255 - b})`;
+            } else {
+                document.querySelector('#easy').style.backgroundColor = `rgb(${r / 2}, ${g / 2}, ${b / 2})`;
+            }
             return [r, g, b];
         }
 
@@ -355,8 +153,16 @@
 
                             success = true;
                         }
-
                     }
+                }
+            }
+
+            if (easy) {
+                let color_name = findClosestColor(cur_color[0], cur_color[1], cur_color[2]);
+                console.log(color_name);
+
+                if (color_name == inp) {
+                    success = true;
                 }
             }
 
@@ -367,7 +173,13 @@
                 document.getElementById('result').innerText = 'Correct!';
             } else {
                 document.body.style.color = 'red';
-                document.getElementById('result').innerText = `Wrong! Answer was #${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')} (${ntc.name(`#${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')}`)[1]})`;
+                document.getElementById('result').innerText = `Wrong! Answer was #${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')}`;
+
+                if (easy) {
+                    document.getElementById('result').innerText += ` or ${findClosestColor(cur_color[0], cur_color[1], cur_color[2])}`;
+                } else {
+                    document.getElementById('result').innerText += ` or ${ntc.name(`#${cur_color[0].toString(16).padStart(2, '0')}${cur_color[1].toString(16).padStart(2, '0')}${cur_color[2].toString(16).padStart(2, '0')}`)[1].replace(' ', '')}`;
+                }
             }
 
             document.body.style.color = 'white';
